@@ -5,6 +5,14 @@
 use warnings;
 use strict;
 
+sub basepath {
+	my ($dir) = @_;
+	$dir .= '/';
+	$dir =~ s/^\.\///;
+	$dir =~ s/[^\/]+/../g;
+	return $dir;
+}
+
 sub direntries {
 	my ($dir) = @_;
 	my $dh;
@@ -79,6 +87,42 @@ sub checkthumbnail {
 	system 'convert', '-resize', '200x200', "$dir/$img", "$dir/$thumbpath";
 }
 
+sub viewpages {
+	my ($dir, @pages) = @_;
+	my $prev = [];
+	my $cur = shift @pages;
+	for my $next (@pages, []) {
+		viewpage($dir, $prev, $cur, $next);
+		$prev = $cur;
+		$cur = $next;
+	}
+}
+
+sub viewpagename {
+	my ($name) = @_;
+	$name =~ s/\.[^.]*$|$/\.html/;
+	return $name;
+}
+
+sub viewpage {
+	my ($dir, $prev, $cur, $next) = @_;
+	my $basepath = basepath $dir;
+	my $htmlname = viewpagename $cur;
+	$prev = viewpagename $prev;
+	$next = viewpagename $next;
+	if (-e "$dir/$htmlname") { return; }
+	print "Generate view page $htmlname\n";
+	my $fh;
+	open $fh, '>', "$dir/$htmlname";
+	print $fh <<HTML;
+<!DOCTYPE html><html><head><script type=\"text/javascript\" src=\"${basepath}script.js\"></script>
+<link rel=\"stylesheet\" type=\"text/css\" href=\"${basepath}imagestyle.css\" /></head>
+<body><a href=\"$prev\" id=\"prev\">&larr;</a>
+<img src=\"$cur\" /><a href=\"$next\" id=\"next\">&rarr;</a></body></html>
+HTML
+	close $fh;
+}
+
 sub generate_for_directory {
 	my ($dir) = @_;
 
@@ -109,6 +153,7 @@ sub generate_for_directory {
 	my @images = imagefiles $dir;
 	if (@images) {
 		checkthumbnails $dir, @images;
+		viewpages $dir, @images;
 		printimages($fd, @images);
 	}
 	printfooter($fd);
@@ -116,10 +161,7 @@ sub generate_for_directory {
 
 sub printheader {
 	my ($fd, $dir) = @_;
-	my $style = "$dir/";
-	$style =~ s/^\.\///;
-	$style =~ s/[^\/]+/../g;
-	$style .= 'style.css';
+	my $style = basepath($dir).'style.css';
 	my $mm = magic_marker;
 	print $fd <<HTML;
 <!DOCTYPE html>
@@ -147,7 +189,8 @@ sub printimages {
 	my ($fd, @images) = @_;
 	print $fd "<ul id=\"images\">\n";
 	for my $img (@images) {
-		print $fd "<li><a href=\"$img\"><img src=\"".thumbpath($img)."\" /></a></li>\n";
+		my $page = viewpagename $img;
+		print $fd "<li><a href=\"$page\"><img src=\"".thumbpath($img)."\" /></a></li>\n";
 	}
 	print $fd "</ul>\n";
 }
