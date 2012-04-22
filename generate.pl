@@ -14,7 +14,7 @@ sub direntries {
 	}
 	my @direntries = grep { !/^\./ } readdir($dh);
 	closedir $dh;
-	return @direntries;
+	return sort @direntries;
 }
 
 sub subdirs {
