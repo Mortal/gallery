@@ -27,7 +27,7 @@ sub direntries {
 
 sub subdirs {
 	my ($dir) = @_;
-	return grep { !/^thumbs$/ && -d "$dir/$_" && !-e "$dir/$_/.galleryskip" } direntries $dir;
+	return reverse grep { !/^thumbs$/ && -d "$dir/$_" && !-e "$dir/$_/.galleryskip" } direntries $dir;
 }
 
 sub imagefiles {
