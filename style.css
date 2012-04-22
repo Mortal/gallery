@@ -9,16 +9,26 @@ ul {
 	border: 3px solid red;
 	background-color: white;
 }
+li {
+	list-style-type: none;
+}
+#subgalleries {
+	column-count: 3;
+	-moz-column-count: 3;
+	-webkit-column-count: 3;
+	-o-column-count: 3;
+	-ms-column-count: 3;
+}
 #images {
 	border-color: green;
 }
 #images li {
 	margin: 0;
 	padding: 0;
-	list-style-type: none;
-}
-#images li {
 	display: inline-block;
+	width: 210px;
+	line-height: 210px;
+	text-align: center;
 }
 img {
 	vertical-align: middle;
