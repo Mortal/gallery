@@ -136,7 +136,7 @@ sub generate_for_directory {
 
 	my @subdirs = subdirs $dir;
 	for my $subdir (@subdirs) {
-		generate_for_directory("$dir/$subdir");
+		generate_for_directory("$dir/$subdir", 1);
 	}
 
 	my $fd;
