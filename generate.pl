@@ -124,7 +124,7 @@ HTML
 }
 
 sub generate_for_directory {
-	my ($dir) = @_;
+	my ($dir, $hasparent) = @_;
 
 	my $index = "$dir/index.html";
 	if (-e $index) {
@@ -146,6 +146,9 @@ sub generate_for_directory {
 	}
 	print "Generating $index\n";
 	printheader($fd, $dir);
+	if ($hasparent) {
+		unshift @subdirs, '..';
+	}
 	my @subindexes = grep { -e "$dir/$_/index.html" } @subdirs;
 	if (@subindexes) {
 		printsubgalleries($fd, @subindexes);
@@ -180,7 +183,11 @@ sub printsubgalleries {
 	my ($fd, @dirs) = @_;
 	print $fd "<ul id=\"subgalleries\">\n";
 	for my $dir (@dirs) {
-		print $fd "<li><a href=\"$dir/\">$dir</a></li>\n";
+		my $printdir = $dir;
+		if ($printdir eq '..') {
+			$printdir = "Tilbage til forrige";
+		}
+		print $fd "<li><a href=\"$dir/\">$printdir</a></li>\n";
 	}
 	print $fd "</ul>\n";
 }
