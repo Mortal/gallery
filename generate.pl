@@ -118,7 +118,8 @@ sub viewpage {
 <!DOCTYPE html><html><head><script type=\"text/javascript\" src=\"${basepath}script.js\"></script>
 <link rel=\"stylesheet\" type=\"text/css\" href=\"${basepath}imagestyle.css\" /></head>
 <body><a href=\"$prev\" id=\"prev\">&larr;</a>
-<img src=\"$cur\" /><a href=\"$next\" id=\"next\">&rarr;</a></body></html>
+<a href=\"$next\"><img src=\"$cur\" /></a>
+<a href=\"$next\" id=\"next\">&rarr;</a></body></html>
 HTML
 	close $fh;
 }
@@ -174,6 +175,15 @@ $mm
 <meta charset="utf-8" />
 <title>Galleri af $dir</title>
 <link rel="stylesheet" type="text/css" href="$style" />
+<script type="text/javascript">
+window.onkeydown = function (ev) {
+	if (!ev) ev = window.event;
+	if (ev.keyCode == 8) // backspace
+		location.href = "..";
+	if (ev.keyCode == 39) // right
+		location.href = (document.getElementById('first') || document.links[1] || document.links[0]).href;
+};
+</script>
 </head>
 <body>
 HTML
@@ -195,9 +205,11 @@ sub printsubgalleries {
 sub printimages {
 	my ($fd, @images) = @_;
 	print $fd "<ul id=\"images\">\n";
+	my $first = " id=\"first\"";
 	for my $img (@images) {
 		my $page = viewpagename $img;
-		print $fd "<li><a href=\"$page\"><img src=\"".thumbpath($img)."\" /></a></li>\n";
+		print $fd "<li><a href=\"$page\"$first><img src=\"".thumbpath($img)."\" /></a></li>\n";
+		$first = '';
 	}
 	print $fd "</ul>\n";
 }

@@ -1,9 +1,10 @@
 window.onkeydown = function (ev) {
 	if (!ev) ev = window.event;
-	if (ev.keyCode == 37) // left
+	var k = ev.keyCode;
+	if (k == 37) // left
 		location.href = document.getElementById('prev').href;
-	if (ev.keyCode == 38) // up
+	if (k == 38 || k == 27 || k == 8) // up || escape || backspace
 		location.href = ".";
-	if (ev.keyCode == 39) // right
+	if (k == 39 || k == 32) // right || space
 		location.href = document.getElementById('next').href;
 };
