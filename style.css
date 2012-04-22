@@ -1,0 +1,25 @@
+body {
+	background-color: #999;
+	font-family: sans-serif;
+}
+ul {
+	width: 90%;
+	margin: 1em auto;
+	padding: 1em;
+	border: 3px solid red;
+	background-color: white;
+}
+#images {
+	border-color: green;
+}
+#images li {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+#images li {
+	display: inline-block;
+}
+img {
+	vertical-align: middle;
+}
