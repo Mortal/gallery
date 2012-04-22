@@ -108,10 +108,10 @@ sub viewpage {
 	my ($dir, $prev, $cur, $next) = @_;
 	my $basepath = basepath $dir;
 	my $htmlname = viewpagename $cur;
-	$prev = viewpagename $prev;
-	$next = viewpagename $next;
+	$prev = ('' eq ref $prev) ? viewpagename($prev) : '.';
+	$next = ('' eq ref $next) ? viewpagename($next) : '.';
 	if (-e "$dir/$htmlname") { return; }
-	print "Generate view page $htmlname\n";
+	print "Generate view page $dir/$htmlname\n";
 	my $fh;
 	open $fh, '>', "$dir/$htmlname";
 	print $fh <<HTML;
