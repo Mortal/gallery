@@ -40,7 +40,7 @@ sub subdirs {
 # Return a list of images in a directory
 sub imagefiles {
 	my ($dir) = @_;
-	return grep { /\.jpe?g$/i } direntries $dir;
+	return grep { /\.(jpe?g|gif)$/i } direntries $dir;
 }
 
 # Read all of a file as a string
