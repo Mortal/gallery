@@ -219,15 +219,36 @@ HTML
 # Print the list of subgalleries of a directory to an index.html
 sub printsubgalleries {
 	my ($fd, @dirs) = @_;
-	print $fd "<ul id=\"subgalleries\">\n";
+	my %groups = ();
 	for my $dir (@dirs) {
-		my $printdir = $dir;
-		if ($printdir eq '..') {
-			$printdir = "Tilbage til forrige";
+		if ($dir =~ /^([0-9]{4})_(.*)/) {
+			$groups{$1} = [] unless exists $groups{$1};
+			push @{$groups{$1}}, [$dir, $2];
+		} else {
+			$groups{''} = [] unless exists $groups{''};
+			push @{$groups{''}}, [$dir, $dir];
 		}
-		print $fd "<li><a href=\"$dir/\">$printdir</a></li>\n";
 	}
-	print $fd "</ul>\n";
+	for my $group (sort { $b cmp $a } keys %groups) {
+		my @dirs = sort { $a->[0] cmp $b->[1] } @{$groups{$group}};
+		print $fd "<div id=\"subgalleries\">\n";
+		if ($group ne '') {
+			print $fd "<h1>$group</h1>\n";
+		}
+		print $fd "<ul>\n";
+		for my $dir (@dirs) {
+			my $linkdir = $dir->[0];
+			my $printdir = $dir->[1];
+			if ($printdir eq '..') {
+				$printdir = "Tilbage til forrige";
+			} elsif ($printdir =~ /^[0-9]{2}_(.*)/) {
+				$printdir = $1;
+			}
+			print $fd "<li><a href=\"$linkdir/\">$printdir</a></li>\n";
+		}
+		print $fd "</ul>\n";
+		print $fd "</div>\n";
+	}
 }
 
 # Print the list of thumbnails of images in a directory to an index.html
